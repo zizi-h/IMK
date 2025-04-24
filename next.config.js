@@ -32,6 +32,15 @@ const nextConfig = {
       },
     ];
   },
+  experimental: {
+    serverActions: true,
+  },
+  serverRuntimeConfig: {
+    PROJECT_ROOT: __dirname,
+  },
+  functions: {
+    maxDuration: 60,
+  },
 }
 
 module.exports = nextConfig
