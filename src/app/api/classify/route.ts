@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export async function POST(request: Request) {
   try {
     const { image } = await request.json();
-    
+
     // 这里是示例响应，实际部署时您需要接入真实的AI模型服务
     const mockResults = [
       { class: "猫", confidence: 0.95 },
@@ -18,4 +18,4 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-} 
+}

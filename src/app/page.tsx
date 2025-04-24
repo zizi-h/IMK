@@ -32,7 +32,7 @@ export default function Home() {
 
   const analyzeImage = async () => {
     if (!selectedImage) return;
-    
+
     setIsLoading(true);
     try {
       const response = await fetch('/api/classify', {
@@ -42,11 +42,11 @@ export default function Home() {
         },
         body: JSON.stringify({ image: selectedImage }),
       });
-      
+
       const data = await response.json();
       setResults(data.results);
     } catch (error) {
-      console.error('Classification error:', error);
+      console.error('Classification error', error);
       setResults([{ class: '分析出错了，请重试', confidence: 1 }]);
     } finally {
       setIsLoading(false);
@@ -138,4 +138,4 @@ export default function Home() {
       </div>
     </main>
   );
-} 
+}
