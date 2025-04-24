@@ -3,6 +3,13 @@ import { NextResponse } from 'next/server';
 export async function POST(request: Request) {
   try {
     const { image } = await request.json();
+    
+    if (!image) {
+      return NextResponse.json(
+        { error: "未提供图片数据" },
+        { status: 400 }
+      );
+    }
 
     // 这里是示例响应，实际部署时您需要接入真实的AI模型服务
     const mockResults = [
@@ -13,6 +20,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ results: mockResults });
   } catch (error) {
+    console.error('API Error:', error);
     return NextResponse.json(
       { error: "处理图片时出错" },
       { status: 500 }
