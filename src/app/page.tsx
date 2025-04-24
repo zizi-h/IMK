@@ -34,23 +34,45 @@ export default function Home() {
     if (!selectedImage) return;
 
     setIsLoading(true);
-    try {
-      const response = await fetch('/api/classify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ image: selectedImage }),
-      });
+    let retries = 3;
+    
+    while (retries > 0) {
+      try {
+        const response = await fetch('/api/classify', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ image: selectedImage }),
+        });
 
-      const data = await response.json();
-      setResults(data.results);
-    } catch (error) {
-      console.error('Classification error', error);
-      setResults([{ class: '分析出错了，请重试', confidence: 1 }]);
-    } finally {
-      setIsLoading(false);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (data.error) {
+          throw new Error(data.error);
+        }
+        
+        setResults(data.results);
+        break; // 成功后退出重试循环
+      } catch (error) {
+        console.error(`Classification attempt ${4 - retries} failed:`, error);
+        retries--;
+        
+        if (retries === 0) {
+          setResults([{ 
+            class: '分析出错了，请重试。错误信息：' + (error instanceof Error ? error.message : '未知错误'), 
+            confidence: 1 
+          }]);
+        } else {
+          // 等待1秒后重试
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
     }
+    setIsLoading(false);
   };
 
   return (
